@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/DataTable";
 import { JobForm } from "@/components/JobForm";
+import { Job } from "@/lib/types";
 import { useState } from "react";
 
 const jobs = [
@@ -36,7 +37,7 @@ const jobs = [
 ];
 
 const JobsPage = () => {
-  const [jobData, setJobData] = useState(jobs || []);
+  const [jobData, setJobData] = useState<Job[]>(jobs || []);
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">

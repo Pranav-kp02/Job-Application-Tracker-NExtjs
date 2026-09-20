@@ -15,18 +15,29 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Job } from "@/lib/types";
 import React, { useState } from "react";
 
-export function JobForm({ setJobData, jobData }) {
+interface JobFormProps {
+  setJobData: React.Dispatch<React.SetStateAction<Job[]>>;
+  jobData: Job[];
+}
+
+export function JobForm({ setJobData, jobData }: JobFormProps) {
   const [open, setOpen] = useState(false);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    setJobData([...jobData, data]);
-    console.log("formData", data);
-
+    const newJob: Job = {
+      id: Date.now(),
+      company: formData.get("company") as string,
+      position: formData.get("position") as string,
+      status: formData.get("status") as Job["status"],
+      appliedDate: formData.get("appliedDate") as string,
+      //   jobUrl: formData.get("jobUrl") as string,
+      //   notes: formData.get("notes") as string,
+    };
+    setJobData((prev) => [...prev, newJob]);
     setOpen(false);
   };
   return (

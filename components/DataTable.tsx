@@ -9,8 +9,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "./ui/button";
+import { Job } from "@/lib/types";
 
-export function DataTable({ jobs }) {
+export function DataTable({ jobs }: { jobs: Job[] }) {
   console.log("jobs", jobs);
   return (
     <div>
