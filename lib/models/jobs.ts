@@ -16,7 +16,7 @@ const jobShema = new Schema(
       default: "Applied",
     },
     appliedDate: {
-      type: String,
+      type: Date,
       default: Date.now,
     },
   },
@@ -25,4 +25,4 @@ const jobShema = new Schema(
   },
 );
 
-export const Job = models.Job || mongoose.model("Job", jobShema);
+export const Job = mongoose.models.Job || mongoose.model("Job", jobShema);

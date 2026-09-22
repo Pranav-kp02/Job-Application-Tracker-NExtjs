@@ -16,20 +16,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Job } from "@/lib/types";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-interface JobFormProps {
-  setJobData: React.Dispatch<React.SetStateAction<Job[]>>;
-  jobData: Job[];
-}
-
-export function JobForm({ setJobData, jobData }: JobFormProps) {
+export function JobForm() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newJob: Job = {
-      id: Date.now(),
+      _id: Date.now(),
       company: formData.get("company") as string,
       position: formData.get("position") as string,
       status: formData.get("status") as Job["status"],
@@ -37,8 +35,18 @@ export function JobForm({ setJobData, jobData }: JobFormProps) {
       //   jobUrl: formData.get("jobUrl") as string,
       //   notes: formData.get("notes") as string,
     };
-    setJobData((prev) => [...prev, newJob]);
-    setOpen(false);
+
+    const res = await fetch("/api/jobs", {
+      method: "POST",
+      body: JSON.stringify(newJob),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      router.refresh();
+      setOpen(false);
+    }
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
