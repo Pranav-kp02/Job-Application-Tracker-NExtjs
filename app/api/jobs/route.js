@@ -2,11 +2,37 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import { Job } from "../../../lib/models/jobs";
 
-export const GET = async () => {
+export const GET = async (req) => {
   try {
     await connectDB();
 
-    const job = await Job.find().sort({
+    const { searchParams } = new URL(req.url);
+
+    const search = searchParams.get("search");
+    console.log("search", search);
+
+    let query;
+
+    if (search && search.trim() !== "") {
+      query = {
+        $or: [
+          {
+            company: {
+              $regex: search,
+              $options: "i",
+            },
+          },
+          {
+            position: {
+              $regex: search,
+              $options: "i",
+            },
+          },
+        ],
+      };
+    }
+
+    const job = await Job.find(query).sort({
       createdAt: -1,
     });
     return NextResponse.json({
@@ -66,41 +92,3 @@ export const DELETE = async (req) => {
     });
   }
 };
-
-// export const DELETE = async (req: Request) => {
-//   try {
-//     await connectDB();
-
-//     const data = await req.json();
-
-//     console.log("data:", data);
-//     console.log("id:", data.id);
-
-//     const job = await Job.findByIdAndDelete(data.id);
-
-//     if (!job) {
-//       return NextResponse.json(
-//         {
-//           success: false,
-//           message: "Job not found",
-//         },
-//         { status: 404 }
-//       );
-//     }
-
-//     return NextResponse.json({
-//       success: true,
-//       data: job,
-//     });
-//   } catch (error) {
-//     console.error("DELETE ERROR:", error);
-
-//     return NextResponse.json(
-//       {
-//         success: false,
-//         error: error instanceof Error ? error.message : "Something went wrong",
-//       },
-//       { status: 500 }
-//     );
-//   }
-// };
