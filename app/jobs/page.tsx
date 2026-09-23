@@ -1,8 +1,22 @@
 import { DataTable } from "@/components/DataTable";
 import { JobForm } from "@/components/JobForm";
 
-const JobsPage = async () => {
-  const res = await fetch("http://localhost:3000/api/jobs");
+interface searchParmsProps {
+  search: string;
+}
+const JobsPage = async ({
+  searchParams,
+}: {
+  searchParams: searchParmsProps;
+}) => {
+  const params = await searchParams;
+  const search = params.search;
+
+  let URL = search
+    ? `http://localhost:3000/api/jobs?search=${params.search}`
+    : `http://localhost:3000/api/jobs`;
+
+  const res = await fetch(URL);
   const data = await res.json();
 
   return (
@@ -13,7 +27,7 @@ const JobsPage = async () => {
         <JobForm />
       </div>
 
-      <DataTable jobs={data.data} key={data.data.id} />
+      <DataTable jobs={data.data} key={data.data._id} />
     </div>
   );
 };
