@@ -43,6 +43,18 @@ export function DataTable({ jobs }: { jobs: Job[] }) {
     router.push(`/jobs?${params.toString()}`);
   };
 
+  const handleStatus = (stats: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (stats) {
+      params.set("status", stats);
+    } else {
+      params.delete("status");
+    }
+
+    router.push(`/jobs?${params.toString()}`);
+    console.log("stats", stats);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       handleSearch(text);
@@ -51,6 +63,7 @@ export function DataTable({ jobs }: { jobs: Job[] }) {
     return () => clearTimeout(timer);
   }, [text]);
 
+  const tablejobs = jobs || [];
   return (
     <div>
       <div className="mb-4 flex items-center justify-between gap-4">
@@ -65,7 +78,10 @@ export function DataTable({ jobs }: { jobs: Job[] }) {
         </div>
         {/* Filter */}
         <div className="flex items-center gap-2">
-          <select className="rounded-md border px-3 py-2 text-sm">
+          <select
+            className="rounded-md border px-3 py-2 text-sm"
+            onChange={(e) => handleStatus(e.target.value)}
+          >
             <option value="">Filter by status</option>
             <option value="Applied">Applied</option>
             <option value="Interview">Interview</option>
@@ -88,7 +104,7 @@ export function DataTable({ jobs }: { jobs: Job[] }) {
           </TableHeader>
 
           <TableBody>
-            {jobs.map((job) => (
+            {tablejobs.map((job) => (
               <TableRow key={job._id}>
                 <TableCell className="font-medium">{job.company}</TableCell>
 
