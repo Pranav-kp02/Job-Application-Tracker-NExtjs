@@ -7,29 +7,35 @@ export const GET = async (req) => {
     await connectDB();
 
     const { searchParams } = new URL(req.url);
+    console.log("searchParams", searchParams);
 
     const search = searchParams.get("search");
-    console.log("search", search);
+    const status = searchParams.get("status");
 
-    let query;
+    console.log("search", search);
+    console.log("status", status);
+
+    const query = {};
 
     if (search && search.trim() !== "") {
-      query = {
-        $or: [
-          {
-            company: {
-              $regex: search,
-              $options: "i",
-            },
+      query.$or = [
+        {
+          company: {
+            $regex: search,
+            $options: "i",
           },
-          {
-            position: {
-              $regex: search,
-              $options: "i",
-            },
+        },
+        {
+          position: {
+            $regex: search,
+            $options: "i",
           },
-        ],
-      };
+        },
+      ];
+    }
+
+    if (status && status !== "all") {
+      query.status = status;
     }
 
     const job = await Job.find(query).sort({

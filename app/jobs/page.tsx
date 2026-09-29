@@ -3,6 +3,7 @@ import { JobForm } from "@/components/JobForm";
 
 interface searchParmsProps {
   search: string;
+  status: string;
 }
 const JobsPage = async ({
   searchParams,
@@ -11,9 +12,19 @@ const JobsPage = async ({
 }) => {
   const params = await searchParams;
   const search = params.search;
+  const status = params.status || "";
 
-  let URL = search
-    ? `http://localhost:3000/api/jobs?search=${params.search}`
+  const queryParams = new URLSearchParams();
+  if (search) {
+    queryParams.set("search", search);
+  }
+
+  if (status) {
+    queryParams.set("status", status);
+  }
+  const queryString = queryParams.toString();
+  let URL = queryString
+    ? `http://localhost:3000/api/jobs?${queryString}`
     : `http://localhost:3000/api/jobs`;
 
   const res = await fetch(URL);
@@ -27,7 +38,7 @@ const JobsPage = async ({
         <JobForm />
       </div>
 
-      <DataTable jobs={data.data} key={data.data._id} />
+      <DataTable jobs={data.data} key={data?.data?._id} />
     </div>
   );
 };
